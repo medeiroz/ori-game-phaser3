@@ -5,12 +5,12 @@ import Scene01 from './scenes/Scene01'
 const config = {
   type: Phaser.AUTO,
   parent: 'app',
-  width: 650,
-  height: 500,
+  width: 800,
+  height: 600,
   physics: {
     default: 'arcade',
     arcade: {
-      gravity: { y: 200 },
+      gravity: { y: 600 },
     },
   },
   scene: [Scene01],

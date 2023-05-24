@@ -1,6 +1,8 @@
 import Phaser from 'phaser'
 
-import Scene01 from './scenes/Scene01'
+import Scene01Scene from './scenes/Scene01Scene'
+import GameOverScene from './scenes/GameoverScene'
+import StartGameScene from './scenes/StartGameScene'
 
 const config = {
   type: Phaser.AUTO,
@@ -10,10 +12,11 @@ const config = {
   physics: {
     default: 'arcade',
     arcade: {
+      debug: false,
       gravity: { y: 800 },
     },
   },
-  scene: [Scene01],
+  scene: [Scene01Scene, StartGameScene, GameOverScene],
   pixelArt: true,
 } as Phaser.Types.Core.GameConfig
 

@@ -16,7 +16,7 @@ const config = {
       gravity: { y: 800 },
     },
   },
-  scene: [Scene01Scene, StartGameScene, GameOverScene],
+  scene: [StartGameScene, Scene01Scene, GameOverScene],
   pixelArt: true,
 } as Phaser.Types.Core.GameConfig
 

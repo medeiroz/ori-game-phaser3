@@ -10,10 +10,11 @@ const config = {
   physics: {
     default: 'arcade',
     arcade: {
-      gravity: { y: 600 },
+      gravity: { y: 800 },
     },
   },
   scene: [Scene01],
-}
+  pixelArt: true,
+} as Phaser.Types.Core.GameConfig
 
 export default new Phaser.Game(config)

@@ -8,6 +8,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   protected jumping = false
   protected speed = 300
   protected jumpSpeed = this.speed + 100
+  protected gamma: number = 0
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, 'player')
@@ -57,6 +58,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     if (this.body?.velocity.x === 0) {
       this.anims.play('idle', true)
     }
+    console.log('player', { x: this.x, y: this.y })
 
     this.updateHitbox()
   }
@@ -129,38 +131,36 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
-  onDeviceorientation = (event: DeviceOrientationEvent) => this.handleGyroscope(event)
+  onDeviceorientation = (event: DeviceOrientationEvent) => this.handleGyroscope(event?.gamma || 0)
 
-  private handleGyroscope(event: DeviceOrientationEvent) {
-    const x = event?.gamma || 0
-    const bodyX = this.body?.velocity.x || 0
-    const tiltThreshold = 10
-
-    if (x > tiltThreshold) {
-      this.moveRight(bodyX + x)
-    } else if (x < -tiltThreshold) {
-      this.moveLeft(bodyX + x)
-    }
+  private handleGyroscope(angle: number) {
+    this.gamma = angle
   }
 
   private get leftPressed(): boolean {
     const leftJoystick = this.joystick?.leftStick.x && this.joystick.leftStick.x < -0.5
+    const gammaLeft = this.gamma < -10
+
     return (
       this.arrowKeys?.left?.isDown ||
       this.wasdKeys?.A?.isDown ||
       (this.joystick && this.joystick.left) ||
       leftJoystick ||
+      gammaLeft ||
       false
     )
   }
 
   private get rightPressed(): boolean {
     const leftJoystick = this.joystick?.leftStick.x && this.joystick.leftStick.x > 0.5
+    const gammaRight = this.gamma > 10
+
     return (
       this.arrowKeys?.right?.isDown ||
       this.wasdKeys?.D?.isDown ||
       (this.joystick && this.joystick.right) ||
       leftJoystick ||
+      gammaRight ||
       false
     )
   }
@@ -174,6 +174,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       this.joystick?.up ||
       this.joystick?.A ||
       leftJoystick ||
+      this.scene.input.activePointer.isDown ||
       false
     )
   }

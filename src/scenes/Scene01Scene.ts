@@ -37,9 +37,9 @@ export default class Scene01 extends Phaser.Scene {
     this.background = new Background(this)
     this.sunGroup = new SunGroup(this)
     this.meteorGroup = new MeteorGroup(this)
-    this.score = new Score(this, 10, 10, 0)
-    this.health = new Health(this, this.cameras.main.width, 10, 3)
-    this.battery = new Battery(this, this.cameras.main.width, 40, 3)
+    this.score = new Score(this, 20, 45, 0)
+    this.health = new Health(this, this.cameras.main.width, 40, 3)
+    this.battery = new Battery(this, this.cameras.main.width, 90, 3)
     this.player = new Player(this, 100, 100)
 
     this.physics.add.collider(this.player, this.background.platforms)

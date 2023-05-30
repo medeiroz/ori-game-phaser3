@@ -65,6 +65,7 @@ export default class Scene01 extends Phaser.Scene {
   }
 
   onOverlapPlayerSun(player: any, sun: any) {
+    console.log('player', player)
     sun.destroy()
     this.score.increase()
     this.battery.charge()

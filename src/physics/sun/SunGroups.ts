@@ -2,9 +2,9 @@ import Phaser from 'phaser'
 import Sun from './Sun'
 
 export default class SunGroup extends Phaser.Physics.Arcade.Group {
-  maxChildren: number = 5
-  spawnLastTime: number = 0
-  spawnInterval: number = 2000
+  protected maxChildren: number = 5
+  protected spawnLastTime: number = 0
+  protected spawnInterval: number = 2000
 
   constructor(scene: Phaser.Scene) {
     super(scene.physics.world, scene)
@@ -21,9 +21,10 @@ export default class SunGroup extends Phaser.Physics.Arcade.Group {
     // @ts-ignore: Unreachable code error
     this.children.each((child: Sun) => {
       child.update()
-      if (child.y > this.scene.cameras.main.height) {
+      if (child.y > this.scene.cameras.main.height - 30) {
         this.killAndHide(child)
         child.destroy()
+        this.scene.events.emit('sun-missed')
       }
     })
   }

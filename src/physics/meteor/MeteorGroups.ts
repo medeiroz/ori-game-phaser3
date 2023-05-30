@@ -2,14 +2,14 @@ import Phaser from 'phaser'
 import Meteor from './Meteor'
 
 export default class MeteorGroup extends Phaser.Physics.Arcade.Group {
-  limitChildren: number = 20
-  childrenQuantity: number = 1
-  spawnIntervalInitial: number = 2750
-  spawnInterval: number = this.spawnIntervalInitial
-  spawnLastTime: number = 0
-  minSpeed: number = 85
-  maxSpeed: number = 185
-  limitSpeed: number = 500
+  protected limitChildren: number = 20
+  protected childrenQuantity: number = 1
+  protected spawnIntervalInitial: number = 2750
+  protected spawnInterval: number = this.spawnIntervalInitial
+  protected spawnLastTime: number = 0
+  protected minSpeed: number = 85
+  protected maxSpeed: number = 185
+  protected limitSpeed: number = 500
 
   constructor(scene: Phaser.Scene) {
     super(scene.physics.world, scene)

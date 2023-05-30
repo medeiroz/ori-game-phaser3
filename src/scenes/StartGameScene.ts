@@ -1,9 +1,12 @@
 import Phaser from 'phaser'
 import Player from '../physics/player'
 import PrimaryButton from '../game-objects/buttons/PrimaryButton'
+import { findMappingById } from '../config/gamepad'
 
 export default class StartGameScene extends Phaser.Scene {
-  sky!: Phaser.GameObjects.Image
+  protected sky!: Phaser.GameObjects.Image
+  protected joystick!: Phaser.Input.Gamepad.Gamepad | undefined
+  protected buttonStart!: Phaser.Input.Gamepad.Button | undefined
 
   constructor() {
     super('start_game')
@@ -28,9 +31,23 @@ export default class StartGameScene extends Phaser.Scene {
     })
   }
 
-  update() {}
+  update() {
+    this.initGamePad()
 
-  onStart() {
+    if (this.joystick?.A || this.buttonStart?.pressed || this.input.keyboard?.addKey('SPACE').isDown) {
+      this.onStart()
+    }
+  }
+
+  private initGamePad() {
+    if (!this.joystick && this.input.gamepad?.pad1) {
+      this.joystick = this.input.gamepad.pad1
+      const index = findMappingById(this.joystick.id).gamepadMapping.START
+      this.buttonStart = this.joystick?.buttons[index]
+    }
+  }
+
+  private onStart() {
     this.scene.start('scene01')
   }
 }

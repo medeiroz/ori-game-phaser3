@@ -1,7 +1,7 @@
 import Phaser from 'phaser'
 
 export default class Meteor extends Phaser.Physics.Arcade.Sprite {
-  constructor(scene: Phaser.Scene, x: number, y: number, private speed: number) {
+  constructor(scene: Phaser.Scene, x: number, y: number, protected speed: number) {
     super(scene, x, y, 'meteor')
 
     this.scene.add.existing(this)
@@ -9,6 +9,7 @@ export default class Meteor extends Phaser.Physics.Arcade.Sprite {
     this.setScale(0.3)
     this.initAnimations()
     this.body?.setSize(this.width - 50, this.height - 25).setOffset(25, 25)
+    this.setDepth(1)
   }
 
   static preload(scene: Phaser.Scene) {

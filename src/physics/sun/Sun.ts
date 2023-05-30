@@ -1,12 +1,13 @@
 import Phaser from 'phaser'
 
 export default class Sun extends Phaser.Physics.Arcade.Sprite {
-  constructor(scene: Phaser.Scene, x: number, y: number, private speed: number) {
+  constructor(scene: Phaser.Scene, x: number, y: number, protected speed: number) {
     super(scene, x, y, 'sun')
 
     this.scene.add.existing(this)
     this.scene.physics.add.existing(this)
     this.setScale(0.3)
+    this.setDepth(1)
     this.initAnimations()
   }
 

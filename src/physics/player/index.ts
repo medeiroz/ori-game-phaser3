@@ -1,27 +1,15 @@
 import Phaser from 'phaser'
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
-  cursors!: Phaser.Types.Input.Keyboard.CursorKeys | undefined
-  keyW!: Phaser.Input.Keyboard.Key | undefined
-  keyA!: Phaser.Input.Keyboard.Key | undefined
-  keyS!: Phaser.Input.Keyboard.Key | undefined
-  keyD!: Phaser.Input.Keyboard.Key | undefined
-  keySpace!: Phaser.Input.Keyboard.Key | undefined
-  jumping = false
+  protected keySpace!: Phaser.Input.Keyboard.Key | undefined
+  protected arrowKeys!: Phaser.Types.Input.Keyboard.CursorKeys | undefined
+  protected wasdKeys!: { [key: string]: Phaser.Input.Keyboard.Key } | undefined
+  protected joystick!: Phaser.Input.Gamepad.Gamepad | undefined
+  protected jumping = false
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, 'player')
-
-    this.scene.add.existing(this)
-    this.scene.physics.add.existing(this)
-
-    this.initCursorKeys()
-    this.initAnimations()
-
-    this.setScale(0.5).setCollideWorldBounds(true).setBounce(0.2)
-    // define o tamanho do corpo do player
-    // para ignorar a parte de cima da imagem que é transparente
-    this.body?.setSize(this.width - 100, this.height - 100).setOffset(50, 100)
+    this.create()
   }
 
   static preload(scene: Phaser.Scene) {
@@ -31,26 +19,38 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     scene.load.image('walking_closed_eyes', 'assets/player/walking_closed_eyes.png')
   }
 
+  create() {
+    this.scene.add.existing(this)
+    this.scene.physics.add.existing(this)
+
+    this.initCursor()
+    this.initAnimations()
+
+    this.setScale(0.5).setCollideWorldBounds(true).setBounce(0.2)
+    // define o tamanho do corpo do player
+    // para ignorar a parte de cima da imagem que é transparente
+    this.body?.setSize(this.width - 100, this.height - 100).setOffset(50, 100)
+    this.setDepth(3)
+  }
+
   update() {
+    this.initGamePad()
     const speed = 300
+    const jumpSpeed = speed + 100
     this.jumping = !this.body?.touching.down
 
-    if (this.cursors?.left?.isDown || this.keyA?.isDown) {
-      this.flipX = true
-      this.setVelocityX(-speed)
-      this.anims.play('walk', true)
-    } else if (this.cursors?.right?.isDown || this.keyD?.isDown) {
-      this.flipX = false
-      this.setVelocityX(speed)
-      this.anims.play('walk', true)
+    if (this.leftPressed) {
+      this.moveLeft(speed)
+    } else if (this.rightPressed) {
+      this.moveRight(speed)
     } else {
       this.setVelocityX(0)
     }
 
-    if ((this.cursors?.up?.isDown || this.keyW?.isDown || this.keySpace?.isDown) && !this.jumping) {
-      this.setVelocityY(-(speed + 100))
-    } else if (this.cursors?.down?.isDown || this.keyS?.isDown) {
-      this.setVelocityY(speed + 100)
+    if (this.upPressed && !this.jumping) {
+      this.jump(jumpSpeed)
+    } else if (this.downPressed) {
+      this.down(jumpSpeed)
     }
 
     if (this.body?.velocity.x === 0) {
@@ -67,13 +67,23 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }, 200)
   }
 
-  private initCursorKeys() {
-    this.cursors = this.scene.input.keyboard?.createCursorKeys()
-    this.keyW = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.W)
-    this.keyA = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.A)
-    this.keyS = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.S)
-    this.keyD = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.D)
+  private initCursor() {
     this.keySpace = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
+    this.arrowKeys = this.scene.input.keyboard?.createCursorKeys()
+    this.wasdKeys = this.scene.input.keyboard?.addKeys({
+      W: Phaser.Input.Keyboard.KeyCodes.W,
+      A: Phaser.Input.Keyboard.KeyCodes.A,
+      S: Phaser.Input.Keyboard.KeyCodes.S,
+      D: Phaser.Input.Keyboard.KeyCodes.D,
+    }) as { [key: string]: Phaser.Input.Keyboard.Key }
+
+    this.initGamePad()
+  }
+
+  private initGamePad() {
+    if (!this.joystick) {
+      this.joystick = this.scene.input.gamepad?.pad1
+    }
   }
 
   private initAnimations() {
@@ -105,5 +115,65 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.body?.setSize(this.width - 150, this.height - 100).setOffset(75, 100)
         break
     }
+  }
+
+  private get leftPressed(): boolean {
+    const leftJoystick = this.joystick?.leftStick.x && this.joystick.leftStick.x < -0.5
+    return (
+      this.arrowKeys?.left?.isDown ||
+      this.wasdKeys?.A?.isDown ||
+      (this.joystick && this.joystick.left) ||
+      leftJoystick ||
+      false
+    )
+  }
+
+  private get rightPressed(): boolean {
+    const leftJoystick = this.joystick?.leftStick.x && this.joystick.leftStick.x > 0.5
+    return (
+      this.arrowKeys?.right?.isDown ||
+      this.wasdKeys?.D?.isDown ||
+      (this.joystick && this.joystick.right) ||
+      leftJoystick ||
+      false
+    )
+  }
+
+  private get upPressed(): boolean {
+    const leftJoystick = this.joystick?.leftStick.y && this.joystick.leftStick.y < -0.7
+    return (
+      this.keySpace?.isDown ||
+      this.arrowKeys?.up?.isDown ||
+      this.wasdKeys?.W?.isDown ||
+      this.joystick?.up ||
+      this.joystick?.A ||
+      leftJoystick ||
+      false
+    )
+  }
+
+  private get downPressed(): boolean {
+    const leftJoystick = this.joystick?.leftStick.y && this.joystick.leftStick.y > 0.7
+    return this.arrowKeys?.down?.isDown || this.wasdKeys?.S?.isDown || this.joystick?.down || leftJoystick || false
+  }
+
+  private moveLeft(speed: number) {
+    this.flipX = true
+    this.setVelocityX(-speed)
+    this.anims.play('walk', true)
+  }
+
+  private moveRight(speed: number) {
+    this.flipX = false
+    this.setVelocityX(speed)
+    this.anims.play('walk', true)
+  }
+
+  private jump(speed: number) {
+    this.setVelocityY(-speed)
+  }
+
+  private down(speed: number) {
+    this.setVelocityY(speed)
   }
 }

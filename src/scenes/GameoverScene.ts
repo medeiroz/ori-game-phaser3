@@ -38,7 +38,7 @@ export default class GameoverScene extends Phaser.Scene {
   update() {
     this.initGamePad()
 
-    if (this.buttonStart?.pressed) {
+    if (this.joystick?.A || this.buttonStart?.pressed || this.input.keyboard?.addKey('SPACE').isDown) {
       this.onRestart()
     }
   }

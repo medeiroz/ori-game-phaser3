@@ -62,7 +62,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   destroy() {
-    //window.removeEventListener('deviceorientation', this.onDeviceorientation)
+    super.destroy()
+    window.removeEventListener('deviceorientation', this.onDeviceorientation)
   }
 
   damage() {

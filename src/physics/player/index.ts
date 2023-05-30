@@ -6,6 +6,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   protected wasdKeys!: { [key: string]: Phaser.Input.Keyboard.Key } | undefined
   protected joystick!: Phaser.Input.Gamepad.Gamepad | undefined
   protected jumping = false
+  protected speed = 300
+  protected jumpSpeed = this.speed + 100
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, 'player')
@@ -24,6 +26,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.scene.physics.add.existing(this)
 
     this.initCursor()
+    this.initGyroscope()
     this.initAnimations()
 
     this.setScale(0.5).setCollideWorldBounds(true).setBounce(0.2)
@@ -35,22 +38,20 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
   update() {
     this.initGamePad()
-    const speed = 300
-    const jumpSpeed = speed + 100
     this.jumping = !this.body?.touching.down
 
     if (this.leftPressed) {
-      this.moveLeft(speed)
+      this.moveLeft(this.speed)
     } else if (this.rightPressed) {
-      this.moveRight(speed)
+      this.moveRight(this.speed)
     } else {
       this.setVelocityX(0)
     }
 
     if (this.upPressed && !this.jumping) {
-      this.jump(jumpSpeed)
+      this.jump(this.jumpSpeed)
     } else if (this.downPressed) {
-      this.down(jumpSpeed)
+      this.down(this.jumpSpeed)
     }
 
     if (this.body?.velocity.x === 0) {
@@ -58,6 +59,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     this.updateHitbox()
+  }
+
+  destroy() {
+    //window.removeEventListener('deviceorientation', this.onDeviceorientation)
   }
 
   damage() {
@@ -83,6 +88,12 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   private initGamePad() {
     if (!this.joystick) {
       this.joystick = this.scene.input.gamepad?.pad1
+    }
+  }
+
+  private initGyroscope() {
+    if (window.DeviceOrientationEvent) {
+      window.addEventListener('deviceorientation', this.onDeviceorientation)
     }
   }
 
@@ -114,6 +125,20 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       case 'walk':
         this.body?.setSize(this.width - 150, this.height - 100).setOffset(75, 100)
         break
+    }
+  }
+
+  onDeviceorientation = (event: DeviceOrientationEvent) => this.handleGyroscope(event)
+
+  private handleGyroscope(event: DeviceOrientationEvent) {
+    const x = event?.gamma || 0
+    const bodyX = this.body?.velocity.x || 0
+    const tiltThreshold = 10
+
+    if (x > tiltThreshold) {
+      this.moveRight(bodyX + x)
+    } else if (x < -tiltThreshold) {
+      this.moveLeft(bodyX + x)
     }
   }
 

@@ -1,5 +1,5 @@
 export default class Cloud extends Phaser.Physics.Arcade.Image {
-  constructor(scene: Phaser.Scene, x: number, y: number, protected speed: number) {
+  constructor(scene: Phaser.Scene, x: number, y: number, public speed: number) {
     const name = 'cloud_' + Phaser.Math.Between(1, 2)
     super(scene, x, y, name)
     this.scene.add.existing(this)

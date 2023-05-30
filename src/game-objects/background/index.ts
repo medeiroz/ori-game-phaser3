@@ -2,9 +2,9 @@ import Phaser from 'phaser'
 import CloudGroups from './cloud/CloudGroups'
 
 export default class Background {
-  protected sky!: Phaser.GameObjects.Image
-  protected clouds!: CloudGroups
-  public platforms!: Phaser.Physics.Arcade.StaticGroup
+  sky!: Phaser.GameObjects.Image
+  clouds!: CloudGroups
+  platforms!: Phaser.Physics.Arcade.StaticGroup
 
   constructor(protected scene: Phaser.Scene) {
     this.create()

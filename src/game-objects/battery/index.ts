@@ -4,7 +4,7 @@ const TEXTURE_ON = 'battery_on'
 const TEXTURE_OFF = 'battery_off'
 
 export default class Battery {
-  protected batteries: Phaser.GameObjects.Image[] = []
+  batteries: Phaser.GameObjects.Image[] = []
 
   constructor(protected scene: Phaser.Scene, protected x: number, protected y: number, protected quantity: number) {
     this.create()

@@ -1,7 +1,7 @@
 import Phaser from 'phaser'
 
 export default class Health {
-  protected hearts: Phaser.GameObjects.Image[] = []
+  hearts: Phaser.GameObjects.Image[] = []
 
   constructor(protected scene: Phaser.Scene, protected x: number, protected y: number, protected quantity: number) {
     this.init()

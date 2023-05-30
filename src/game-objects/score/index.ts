@@ -1,7 +1,7 @@
 import Phaser from 'phaser'
 
 export default class Score extends Phaser.GameObjects.Text {
-  protected score: number = 0
+  score: number = 0
 
   constructor(scene: Phaser.Scene, x: number = 10, y: number = 10, score: number = 0) {
     super(scene, x, y, 'Score: 0', { font: '16px Arial', color: '#ffffff' })

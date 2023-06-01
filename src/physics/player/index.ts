@@ -49,9 +49,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       this.setVelocityX(0)
     }
 
-    if (this.upPressed && !this.jumping) {
+    if (this.upPressed && !this.jumping && !this.downPressed) {
       this.jump(this.jumpSpeed)
-    } else if (this.downPressed) {
+    } else if (this.downPressed && !this.upPressed) {
       this.down(this.jumpSpeed)
     }
 
